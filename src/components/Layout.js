@@ -73,7 +73,7 @@ export default function Layout({ children }) {
       </div>
 
       {/* Push content below the ribbon */}
-      <div style={{ marginTop: "90px" }}>{children}</div>
+      <div style={{ marginTop: "350px" }}>{children}</div>
     </div>
   );
 }
