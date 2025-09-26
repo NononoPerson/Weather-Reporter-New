@@ -1,0 +1,165 @@
+﻿/* ---------- Original Styles ---------- */
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(to right, #83a4d4, #b6fbff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container, .login, .signup, .weather {
+    background-color: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 400px;
+}
+
+h1, h2, h3, p {
+    font-weight: bold;
+    text-align: center;
+}
+
+input {
+    display: block;
+    width: 90%;
+    padding: 12px;
+    margin: 10px auto;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    border-color: #0077ff;
+    box-shadow: 0 0 5px rgba(0, 119, 255, 0.5);
+    outline: none;
+}
+
+button {
+    background-color: #0077ff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 50%;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #005fcc;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+p a {
+    text-decoration: none;
+    color: #0077ff;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+p a:hover {
+    color: #005fcc;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* ---------- Theme Toggle ---------- */
+body.light-theme {
+    background: linear-gradient(to right, #0066ff, #8dd1ff);
+    color: #000;
+}
+
+body.dark-theme {
+    background: linear-gradient(to right, #1e1e1e, #2c2c2c);
+    color: #fff;
+}
+
+body.dark-theme .container,
+body.dark-theme .login,
+body.dark-theme .signup,
+body.dark-theme .weather {
+    background-color: #2a2a2a;
+    color: #fff;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.6);
+}
+
+body.dark-theme input {
+    background-color: #3a3a3a;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+body.dark-theme input:focus {
+    border-color: #66aaff;
+    box-shadow: 0 0 5px rgba(102,170,255,0.5);
+}
+
+body.dark-theme button {
+    background-color: #66aaff;
+    color: #000;
+}
+
+body.dark-theme button:hover {
+    background-color: #3399ff;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+body.dark-theme p a {
+    color: #66aaff;
+}
+
+body.dark-theme p a:hover {
+    color: #3399ff;
+}
+
+.settings-page section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    text-align: center;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider { background-color: #007bff; }
+input:checked + .slider:before { transform: translateX(26px); }
