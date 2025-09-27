@@ -11,6 +11,7 @@ import NotificationPage from "./pages/NotificationPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import SecurityPage from "./pages/SecurityPage";
 import PreferencesPage from "./pages/PreferencesPage";
+import LandingPage from "./pages/LandingPage"; // ✅ added LandingPage
 import Layout from "./components/Layout";
 import { useState } from "react";
 
@@ -20,6 +21,9 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Landing Page without ribbon */}
+        <Route path="/" element={<LandingPage />} />
+
         {/* Pages without ribbon */}
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />

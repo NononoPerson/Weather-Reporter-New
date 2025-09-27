@@ -13,7 +13,7 @@ export default function AccountPage() {
         const newName = prompt("Enter new name:", user.name || "");
         if (newName) updatedUser.name = newName;
         break;
-      case "Update Email":
+      case "Add Email":
         const newEmail = prompt("Enter new email:", user.email || "");
         if (newEmail) updatedUser.email = newEmail;
         break;
@@ -28,7 +28,7 @@ export default function AccountPage() {
       case "Delete Account":
         if (window.confirm("Are you sure you want to delete your account?")) {
           localStorage.removeItem("user");
-          window.location.href = "/login";
+          window.location.href = "/"; // redirect to Landing Page
           return;
         }
         break;
@@ -41,13 +41,13 @@ export default function AccountPage() {
     setTimeout(() => setActiveButton(null), 1000);
   };
 
-  const buttons = ["Update Name", "Update Email", "Update City", "Change Password", "Delete Account"];
+  const buttons = ["Update Name", "Add Email", "Update City", "Change Password", "Delete Account"];
 
   return (
     <div
       style={{
         maxWidth: "700px",
-        margin: "100px auto",
+        margin: "100px auto 250px",
         padding: "20px",
         backgroundColor: "#6bbcffff",
         borderRadius: "10px",

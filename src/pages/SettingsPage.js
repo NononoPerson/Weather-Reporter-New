@@ -21,7 +21,7 @@ export default function SettingsPage() {
     <div
       style={{
         maxWidth: "700px",
-        margin: "500px auto",
+        margin: "100px auto",
         padding: "20px",
         backgroundColor: "#6bbcffff",
         borderRadius: "10px",
@@ -30,7 +30,7 @@ export default function SettingsPage() {
       }}
     >
       <h1 style={{ marginBottom: "15px" }}>Settings</h1>
-      <p style={{ marginBottom: "20px", fontSize: "1.05em", color: "#000000ff" }}>
+      <p style={{ marginBottom: "15px", fontSize: "1.05em", color: "#000000ff" }}>
         Change your account preferences here.
       </p>
 
@@ -40,7 +40,7 @@ export default function SettingsPage() {
           onClick={() => navigate(option.path)}
           style={{
             padding: "12px 20px",
-            margin: "10px 0",
+            margin: "5px auto",
             borderRadius: "8px",
             backgroundColor: "rgba(83, 83, 83, 1)",
             cursor: "pointer",

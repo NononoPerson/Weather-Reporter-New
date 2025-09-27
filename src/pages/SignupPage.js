@@ -122,11 +122,8 @@ export default function SignupPage() {
       valid = false;
     }
 
-    if (!states.includes(stateName)) {
-      setStateError("Invalid State. Please enter a valid one.");
-      valid = false;
-    }
 
+    
     if (!cities.includes(city) && !indianCities.includes(city)) {
       setCityError("Invalid City. Please select a valid city for the state.");
       valid = false;

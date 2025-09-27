@@ -35,6 +35,20 @@ export default function WeatherPage() {
     return () => clearInterval(interval);
   }, [city]);
 
+  // Outfit recommendation logic
+  const getOutfitRecommendation = (temp, condition) => {
+    if (temp < 10) return "Wear a heavy jacket, sweater, and warm boots 🧥🧤";
+    if (temp >= 10 && temp < 20) return "A light jacket or sweater with jeans is perfect 🧥👖";
+    if (temp >= 20 && temp < 30) return "T-shirt and jeans/shorts should be fine 👕🩳";
+    if (temp >= 30) return "Stay cool with light cotton clothes and sunglasses 😎👕";
+
+    if (condition.includes("rain")) return "Don't forget an umbrella or raincoat ☔";
+    if (condition.includes("cloud")) return "A light hoodie or casual outfit 👕☁️";
+    if (condition.includes("clear")) return "Enjoy the sun! Sunglasses recommended 🕶️";
+
+    return "Dress comfortably based on your preference.";
+  };
+
   if (!weather && !error)
     return <p style={{ color: "black" }}>Loading weather for {city}...</p>;
 
@@ -50,7 +64,7 @@ export default function WeatherPage() {
           borderRadius: "15px",
           padding: "20px",
           width: "350px",
-          margin: "100px auto 20px",
+          margin: "20px auto 70px",
           textAlign: "center",
           color: "black",
           boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
@@ -61,7 +75,9 @@ export default function WeatherPage() {
         <p style={{ fontSize: "2.5em", margin: "10px 0" }}>
           {Math.round(weather.main.temp)}°C
         </p>
-        <p style={{ textTransform: "capitalize" }}>{weather.weather[0].description}</p>
+        <p style={{ textTransform: "capitalize" }}>
+          {weather.weather[0].description}
+        </p>
 
         <div style={{ display: "flex", justifyContent: "space-around", marginTop: "15px" }}>
           <div>
@@ -80,6 +96,24 @@ export default function WeatherPage() {
 
         <div style={{ marginTop: "20px", fontSize: "0.9em" }}>
           <p>Feels like: {Math.round(weather.main.feels_like)}°C</p>
+        </div>
+
+        {/* Outfit Recommendation */}
+        <div
+          style={{
+            marginTop: "20px",
+            fontSize: "1em",
+            fontWeight: "bold",
+            color: "black"
+          }}
+        >
+          <p>
+            Outfit Recommendation:{" "}
+            {getOutfitRecommendation(
+              weather.main.temp,
+              weather.weather[0].description.toLowerCase()
+            )}
+          </p>
         </div>
       </div>
     </div>

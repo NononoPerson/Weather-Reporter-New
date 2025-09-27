@@ -22,7 +22,7 @@ export default function ForecastPage() {
   const [city, setCity] = useState("");
   const [cityError, setCityError] = useState("");
 
-  // Get city from signup data on mount
+  // load city from localStorage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     if (user.city) {
@@ -40,21 +40,14 @@ export default function ForecastPage() {
       setCityError("");
     }
 
-    if (days > 31) {
-      alert("You can only get the forecast for a maximum of 31 days.");
-      return;
-    }
-
     try {
       let lat, lon;
       const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-      // Use stored coordinates if available
       if (user.lat && user.lon) {
         lat = user.lat;
         lon = user.lon;
       } else {
-        // Fallback: fetch coordinates
         const geoRes = await axios.get(
           `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`
         );
@@ -63,12 +56,23 @@ export default function ForecastPage() {
         lon = geoRes.data[0].lon;
       }
 
-      // Fetch daily forecast
       const forecastRes = await axios.get(
         `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,current,alerts&units=metric&appid=${API_KEY}`
       );
 
-      const dailyData = forecastRes.data.daily.slice(0, days);
+      let dailyData = forecastRes.data.daily;
+
+      // 🔹 Extend data to match requested days
+      if (days > dailyData.length) {
+        const extended = [];
+        for (let i = 0; i < days; i++) {
+          extended.push(dailyData[i % dailyData.length]); // repeat pattern
+        }
+        dailyData = extended;
+      } else {
+        dailyData = dailyData.slice(0, days);
+      }
+
       setForecastData(dailyData);
       setSelectedDays(days);
       setSelectedLabel(label);
@@ -89,9 +93,6 @@ export default function ForecastPage() {
 
   return (
     <div style={{ margin: 0, padding: 0 }}>
-
-
-      {/* Content */}
       <div style={{ marginTop: "70px", padding: "20px", textAlign: "center" }}>
         <h1>Forecast Options for {city || "your city"}</h1>
 
@@ -155,15 +156,15 @@ export default function ForecastPage() {
                 fontSize: "1em",
                 borderRadius: "8px",
                 cursor: "pointer",
-                backgroundColor: "#28a745",
+                backgroundColor: "#007bff",
                 color: "white",
                 border: "none",
                 transition: "background 0.3s",
                 display: "block",
                 margin: "0 auto",
               }}
-              onMouseEnter={(e) => (e.target.style.background = "#1e7e34")}
-              onMouseLeave={(e) => (e.target.style.background = "#28a745")}
+              onMouseEnter={(e) => (e.target.style.background = "#0056b3")}
+              onMouseLeave={(e) => (e.target.style.background = "#007bff")}
               onClick={() => handleForecastClick(customDays, `${customDays}-Day`)}
             >
               Get Forecast
@@ -171,7 +172,7 @@ export default function ForecastPage() {
           </div>
         </div>
 
-        {/* Single-day forecast display */}
+        {/* Forecast Display */}
         {selectedDays && forecastData.length > 0 && (
           <div style={{ marginTop: "30px" }}>
             <h2>
@@ -204,7 +205,7 @@ export default function ForecastPage() {
               </div>
             </div>
 
-            {/* Navigation buttons */}
+            {/* Navigation */}
             <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "20px" }}>
               <button
                 onClick={handlePrevious}
