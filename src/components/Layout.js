@@ -20,16 +20,43 @@ export default function Layout({ children }) {
           zIndex: 1000,
         }}
       >
-        {/* Top line: mystical heading */}
+        {/* Top line: mystical heading with logout button */}
         <div
           style={{
-            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
             fontSize: "1.5em",
             fontWeight: "bold",
             padding: "8px 0",
+            position: "relative",
           }}
         >
           ⛅ MysticSkies - Where the Weather Whispers Its Secrets
+          <button
+            onClick={() => navigate("/logout")}
+            style={{
+              position: "absolute",
+              right: "20px",
+              padding: "6px 12px",
+              borderRadius: "10px",
+              border: "none",
+              color: "white",
+              maxWidth: "120px",
+              cursor: "pointer",
+              fontSize: "0.9em",
+              transition: "background 0.3s",
+              background: "transparent",
+            }}
+            onMouseEnter={(e) =>
+              (e.target.style.background = "rgba(255,255,255,0.2)")
+            }
+            onMouseLeave={(e) =>
+              (e.target.style.background = "transparent")
+            }
+          >
+            Logout
+          </button>
         </div>
 
         {/* Second line: navigation buttons */}
@@ -57,13 +84,20 @@ export default function Layout({ children }) {
               onMouseEnter={(e) =>
                 (e.target.style.background = "rgba(255,255,255,0.2)")
               }
-              onMouseLeave={(e) => (e.target.style.background = "transparent")}
+              onMouseLeave={(e) =>
+                (e.target.style.background = "transparent")
+              }
               onClick={() => {
                 if (option === "Home") navigate("/weather");
                 else if (option === "Forecast") navigate("/forecast");
                 else if (option === "Settings") navigate("/settings");
                 else if (option === "Profile") navigate("/profile");
-                else if (option === "Help") navigate("/help");
+                else if (option === "Help") navigate("/chatbot-login"); // ✅ updated
+
+                window.scrollTo({
+                  top: document.body.scrollHeight,
+                  behavior: "smooth",
+                });
               }}
             >
               {option}

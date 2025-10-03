@@ -3,30 +3,35 @@ import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import Layout from "../components/Layout";
 
-export default function ChatBotLogin() {
+export default function ChatBotSignup() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [loginMsg, setLoginMsg] = useState("");
-  const [loginError, setLoginError] = useState("");
+  const [dob, setDob] = useState("");
+  const [signupMsg, setSignupMsg] = useState("");
+  const [signupError, setSignupError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
-    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-    if (name === storedUser.name && password === storedUser.password) {
-      setLoginMsg("Login successful!");
-      setLoginError("");
-      // ✅ Navigate directly without timeout for instant redirect
-      navigate("/chatbot-landing");
-    } else {
-      setLoginError("Invalid username or password");
-      setLoginMsg("");
+    if (!name || !password || !dob) {
+      setSignupError("All fields are required");
+      setSignupMsg("");
+      return;
     }
+
+    // Save user data in localStorage
+    const userData = { name, password, dob };
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    setSignupMsg("Signup successful!");
+    setSignupError("");
+    setTimeout(() => navigate("/chatbot-login"), 1500); // Redirect to login after signup
   };
 
   return (
     <Layout>
+      {/* Center the box vertically */}
       <div
         style={{
           display: "flex",
@@ -37,6 +42,7 @@ export default function ChatBotLogin() {
           textAlign: "center",
         }}
       >
+        {/* Container box */}
         <div
           style={{
             background: "rgba(255, 255, 255, 1)",
@@ -51,10 +57,10 @@ export default function ChatBotLogin() {
             marginBottom: "100px",
           }}
         >
-          <h1 style={{ marginBottom: "20px" }}>Chatbot Login</h1>
+          <h1 style={{ marginBottom: "20px" }}>Chatbot Signup</h1>
 
           <form
-            onSubmit={handleLogin}
+            onSubmit={handleSignup}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -91,6 +97,20 @@ export default function ChatBotLogin() {
                 border: "1px solid #ccc",
               }}
             />
+            <input
+              type="date"
+              placeholder="Date of Birth"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              required
+              style={{
+                width: "100%",
+                padding: "10px",
+                fontSize: "1em",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+              }}
+            />
             <button
               type="submit"
               style={{
@@ -104,23 +124,24 @@ export default function ChatBotLogin() {
                 cursor: "pointer",
               }}
             >
-              Login
+              Signup
             </button>
           </form>
 
-          {loginMsg && (
+          {/* Success or Error messages */}
+          {signupMsg && (
             <p style={{ color: "green", fontSize: "0.95em", marginTop: "10px" }}>
-              {loginMsg}
+              {signupMsg}
             </p>
           )}
-          {loginError && (
+          {signupError && (
             <p style={{ color: "red", fontSize: "0.95em", marginTop: "10px" }}>
-              {loginError}
+              {signupError}
             </p>
           )}
 
           <p style={{ marginTop: "15px" }}>
-            Don't have an account? <Link to="/chatbot-signup">Sign Up</Link>
+            Already have an account? <Link to="/chatbot-login">Login</Link>
           </p>
         </div>
       </div>

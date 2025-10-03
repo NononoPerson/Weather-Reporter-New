@@ -2,6 +2,8 @@
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import ChatBotLogin from "./pages/ChatBotLogin";
+import ChatBotSignup from "./pages/ChatBotSignup";
+import ChatBotLandingPage from "./pages/ChatbotLandingPage"; // ✅ standalone
 import WeatherPage from "./pages/WeatherPage";
 import ForecastPage from "./pages/ForecastPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -11,12 +13,13 @@ import NotificationPage from "./pages/NotificationPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import SecurityPage from "./pages/SecurityPage";
 import PreferencesPage from "./pages/PreferencesPage";
-import LandingPage from "./pages/LandingPage"; // ✅ added LandingPage
+import LandingPage from "./pages/LandingPage";
 import Layout from "./components/Layout";
 import { useState } from "react";
+import LogoutPage from "./pages/LogoutPage";
 
 function App() {
-  const [userTrigger, setUserTrigger] = useState(0); // trigger for weather/profile refresh
+  const [userTrigger, setUserTrigger] = useState(0);
 
   return (
     <Router>
@@ -27,8 +30,10 @@ function App() {
         {/* Pages without ribbon */}
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/chatbot-landing" element={<ChatBotLandingPage />} />  {/* No Layout */}
+        <Route path="/chatbot-signup" element={<ChatBotSignup />} />        {/* No Layout */}
 
-        {/* Chatbot Login with ribbon */}
+        {/* Chatbot Login WITH ribbon */}
         <Route
           path="/chatbot-login"
           element={
@@ -71,8 +76,6 @@ function App() {
             </Layout>
           }
         />
-
-        {/* Individual settings pages */}
         <Route
           path="/account"
           element={
@@ -114,8 +117,11 @@ function App() {
           }
         />
 
+        {/* Logout page without ribbon */}
+        <Route path="/logout" element={<LogoutPage />} />
+
         {/* Default fallback */}
-        <Route path="*" element={<LoginPage />} />
+        <Route path="*" element={<LandingPage />} />
       </Routes>
     </Router>
   );

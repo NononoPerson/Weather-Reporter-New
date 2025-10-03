@@ -14,7 +14,7 @@ export default function SecurityPage() {
   };
 
   const buttons = [
-    { key: "twoFactorAuth", label: "Two Factor Auth" },
+    { key: "twoFactorAuth", label: "Two Factor Authentication"},
     { key: "loginAlerts", label: "Login Alerts" },
     { key: "passwordChangeReminder", label: "Password Change Reminder" },
     { key: "trustedDevices", label: "Trusted Devices" },

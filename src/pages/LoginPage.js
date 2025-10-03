@@ -1,7 +1,6 @@
 ﻿import "../styles.css";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-
 export default function LoginPage() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +15,7 @@ export default function LoginPage() {
     if (name === storedUser.name && password === storedUser.password) {
       setLoginMsg("Login successful!");
       setLoginError("");
-      setTimeout(() => navigate("/weather"), 1500); // redirect after 1.5s
+      setTimeout(() => navigate("/weather"),500); // redirect after .5s
     } else {
       setLoginError("Invalid username or password");
       setLoginMsg("");

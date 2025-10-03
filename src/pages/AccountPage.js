@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountPage() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user") || "{}"));
   const [activeButton, setActiveButton] = useState(null);
 
@@ -17,10 +19,6 @@ export default function AccountPage() {
         const newEmail = prompt("Enter new email:", user.email || "");
         if (newEmail) updatedUser.email = newEmail;
         break;
-      case "Update City":
-        const newCity = prompt("Enter new city:", user.city || "");
-        if (newCity) updatedUser.city = newCity;
-        break;
       case "Change Password":
         const newPassword = prompt("Enter new password:");
         if (newPassword) updatedUser.password = newPassword;
@@ -28,10 +26,13 @@ export default function AccountPage() {
       case "Delete Account":
         if (window.confirm("Are you sure you want to delete your account?")) {
           localStorage.removeItem("user");
-          window.location.href = "/"; // redirect to Landing Page
+          navigate("/"); // redirect to Landing Page
           return;
         }
         break;
+      case "Logout":
+        navigate("/logout"); // go to LogoutPage
+        return;
       default:
         break;
     }
@@ -41,7 +42,8 @@ export default function AccountPage() {
     setTimeout(() => setActiveButton(null), 1000);
   };
 
-  const buttons = ["Update Name", "Add Email", "Update City", "Change Password", "Delete Account"];
+  const buttons = ["Update Name", "Add Email", "Change Password", "Delete Account"];
+  const logoutButton = "Logout";
 
   return (
     <div
@@ -73,6 +75,22 @@ export default function AccountPage() {
           {btn}
         </div>
       ))}
+
+      {/* Logout button at the bottom */}
+      <div
+        onClick={() => handleAction(logoutButton)}
+        style={{
+          padding: "12px 20px",
+          margin: "10px 0",
+          borderRadius: "8px",
+          backgroundColor: activeButton === logoutButton ? "#147ffaff" : "rgba(83, 83, 83, 1)",
+          cursor: "pointer",
+          fontWeight: "bold",
+          color: "#000000ff"
+        }}
+      >
+        {logoutButton}
+      </div>
     </div>
   );
 }

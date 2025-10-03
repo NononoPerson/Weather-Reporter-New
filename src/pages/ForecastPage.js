@@ -8,10 +8,10 @@ export default function ForecastPage() {
   const API_KEY = "d55972ac70bf43ecc3a0a6411a7be056";
 
   const forecastOptions = [
-    { label: "7 Days", value: 7 },
-    { label: "2 Weeks", value: 14 },
-    { label: "3 Weeks", value: 21 },
-    { label: "1 Month", value: 30 },
+    { label: "Tomorrow", value: 1 },
+    { label: "3 Days", value: 3 },
+    { label: "4 Days", value: 4 },
+    { label: "5 Days", value: 5 },
   ];
 
   const [customDays, setCustomDays] = useState(1);
@@ -21,65 +21,73 @@ export default function ForecastPage() {
   const [forecastData, setForecastData] = useState([]);
   const [city, setCity] = useState("");
   const [cityError, setCityError] = useState("");
+  const [limitError, setLimitError] = useState("");
 
-  // load city from localStorage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (user.city) {
+    if (user.city && user.city.trim() !== "") {
       setCity(user.city);
+      setCityError("");
     } else {
       setCityError("City not found in your account. Please update your profile.");
     }
   }, []);
 
+  // Unified function to fetch forecast and scroll
   const handleForecastClick = async (days, label) => {
-    if (!city) {
+    if (!city || city.trim() === "") {
       setCityError("City not found. Please update your profile.");
       return;
     } else {
       setCityError("");
     }
 
+    if (days > 5) {
+      setForecastData([]);
+      setSelectedDays(null);
+      setLimitError("⚠️ OpenWeather free API only supports up to 5-day forecast.");
+      return;
+    }
+
     try {
       let lat, lon;
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-      if (user.lat && user.lon) {
-        lat = user.lat;
-        lon = user.lon;
-      } else {
-        const geoRes = await axios.get(
-          `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`
-        );
-        if (!geoRes.data || geoRes.data.length === 0) throw new Error("City not found");
-        lat = geoRes.data[0].lat;
-        lon = geoRes.data[0].lon;
-      }
+      const geoRes = await axios.get(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`
+      );
+      if (!geoRes.data || geoRes.data.length === 0) throw new Error("City not found");
+      lat = geoRes.data[0].lat;
+      lon = geoRes.data[0].lon;
 
       const forecastRes = await axios.get(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,current,alerts&units=metric&appid=${API_KEY}`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
       );
 
-      let dailyData = forecastRes.data.daily;
-
-      // 🔹 Extend data to match requested days
-      if (days > dailyData.length) {
-        const extended = [];
-        for (let i = 0; i < days; i++) {
-          extended.push(dailyData[i % dailyData.length]); // repeat pattern
-        }
-        dailyData = extended;
-      } else {
-        dailyData = dailyData.slice(0, days);
+      const byDay = [];
+      for (let i = 0; i < forecastRes.data.list.length; i += 8) {
+        byDay.push(forecastRes.data.list[i]);
       }
+
+      const dailyData = byDay.slice(0, days).map((d) => ({
+        temp: { day: d.main.temp },
+        feels_like: { day: d.main.feels_like },
+        humidity: d.main.humidity,
+        wind_speed: d.wind.speed,
+        weather: d.weather,
+      }));
 
       setForecastData(dailyData);
       setSelectedDays(days);
       setSelectedLabel(label);
       setCurrentDayIndex(0);
+      setLimitError("");
+
+      // Scroll to bottom after data is set
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      }, 100);
     } catch (err) {
       console.error(err);
-      alert("Failed to fetch forecast. Please check your city in profile.");
+      setCityError("Could not fetch forecast. Try another city.");
     }
   };
 
@@ -93,13 +101,20 @@ export default function ForecastPage() {
 
   return (
     <div style={{ margin: 0, padding: 0 }}>
-      <div style={{ marginTop: "70px", padding: "20px", textAlign: "center" }}>
+      {/* Ribbon */}
+      <div style={{ marginTop: "100px", padding: "20px", textAlign: "center" }}>
         <h1>Forecast Options for {city || "your city"}</h1>
 
         {cityError && (
           <p style={{ color: "red", fontSize: "0.95em", marginTop: "10px" }}>{cityError}</p>
         )}
+        {limitError && (
+          <p style={{ color: "orange", fontSize: "0.95em", marginTop: "10px" }}>{limitError}</p>
+        )}
+      </div>
 
+      {/* All content pushed down */}
+      <div style={{ marginTop: "10px", padding: "20px", textAlign: "center" }}>
         {/* Predefined buttons */}
         <div
           style={{
@@ -107,7 +122,7 @@ export default function ForecastPage() {
             justifyContent: "center",
             flexWrap: "wrap",
             gap: "15px",
-            margin: "20px 0",
+            margin: "0px 0",
           }}
         >
           {forecastOptions.map((option, idx) => (
@@ -139,9 +154,12 @@ export default function ForecastPage() {
             <input
               type="number"
               min={1}
-              max={31}
+              max={5}
               value={customDays}
               onChange={(e) => setCustomDays(Number(e.target.value))}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleForecastClick(customDays, `${customDays}-Day`);
+              }}
               style={{
                 padding: "8px",
                 fontSize: "1em",
@@ -172,11 +190,13 @@ export default function ForecastPage() {
           </div>
         </div>
 
-        {/* Forecast Display */}
+        {/* Single-day forecast display */}
         {selectedDays && forecastData.length > 0 && (
           <div style={{ marginTop: "30px" }}>
             <h2>
-              Day {currentDayIndex + 1} of {selectedLabel} Forecast
+              {selectedDays === 1
+                ? "Tomorrow's Forecast"
+                : `Day ${currentDayIndex + 1} of ${selectedLabel} Forecast`}
             </h2>
             <div
               style={{
@@ -199,13 +219,20 @@ export default function ForecastPage() {
                 alt="weather icon"
               />
               <div style={{ marginTop: "10px", fontSize: "1em" }}>
-                <p><strong>Humidity:</strong> {forecastData[currentDayIndex].humidity}%</p>
-                <p><strong>Wind:</strong> {forecastData[currentDayIndex].wind_speed} m/s</p>
-                <p><strong>Feels like:</strong> {Math.round(forecastData[currentDayIndex].feels_like.day)}°C</p>
+                <p>
+                  <strong>Humidity:</strong> {forecastData[currentDayIndex].humidity}%
+                </p>
+                <p>
+                  <strong>Wind:</strong> {forecastData[currentDayIndex].wind_speed} m/s
+                </p>
+                <p>
+                  <strong>Feels like:</strong>{" "}
+                  {Math.round(forecastData[currentDayIndex].feels_like.day)}°C
+                </p>
               </div>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation buttons */}
             <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "20px" }}>
               <button
                 onClick={handlePrevious}
@@ -214,12 +241,12 @@ export default function ForecastPage() {
                   padding: "8px 15px",
                   cursor: currentDayIndex === 0 ? "not-allowed" : "pointer",
                   borderRadius: "5px",
-                  backgroundColor: currentDayIndex === 0 ? "#ccc" : "#6c757d",
+                  backgroundColor: currentDayIndex === 0 ? "#6c757d" : "#0008ffff",
                   color: "white",
                   border: "none",
                 }}
               >
-                Previous
+                ⬅️Previous
               </button>
               <button
                 onClick={handleNext}
@@ -228,26 +255,26 @@ export default function ForecastPage() {
                   padding: "8px 15px",
                   cursor: currentDayIndex === selectedDays - 1 ? "not-allowed" : "pointer",
                   borderRadius: "5px",
-                  backgroundColor: currentDayIndex === selectedDays - 1 ? "#ccc" : "#6c757d",
+                  backgroundColor: currentDayIndex === selectedDays - 1 ? "#6c757d" : "#0008ffff",
                   color: "white",
                   border: "none",
                 }}
               >
-                Next
+                Next➡️
               </button>
             </div>
           </div>
         )}
 
         {/* Back button */}
-        <div style={{ marginTop: "40px" }}>
+        <div style={{ marginTop: "20px" }}>
           <button
             onClick={() => navigate(-1)}
             style={{
               padding: "8px 15px",
               cursor: "pointer",
               borderRadius: "5px",
-              backgroundColor: "#6c757d",
+              backgroundColor: "#0008ffff",
               color: "white",
               border: "none",
             }}
