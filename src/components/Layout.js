@@ -1,0 +1,130 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+export default function Layout({ children }) {
+  const navigate = useNavigate();
+  const ribbonOptions = ["Home", "Forecast", "Quiz", "Settings", "Profile", "Help"];
+
+  return (
+    <div style={{ margin: 0, padding: 0 }}>
+      {/* Ribbon with top heading and navigation buttons */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          backgroundColor: "#007bff",
+          color: "white",
+          boxShadow: "0 2px 5px rgba(0,0,0,0.3)",
+          zIndex: 1000,
+        }}
+      >
+        {/* Top line */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "1.5em",
+            fontWeight: "bold",
+            padding: "8px 0",
+            position: "relative",
+          }}
+        >
+          ⛅ MysticSkies - Where the Weather Whispers Its Secrets
+          <button
+            onClick={() => navigate("/logout")}
+            style={{
+              position: "absolute",
+              right: "20px",
+              padding: "6px 12px",
+              borderRadius: "10px",
+              border: "none",
+              color: "white",
+              maxWidth: "120px",
+              cursor: "pointer",
+              fontSize: "0.9em",
+              transition: "background 0.3s",
+              background: "transparent",
+            }}
+            onMouseEnter={(e) =>
+              (e.target.style.background = "rgba(255,255,255,0.2)")
+            }
+            onMouseLeave={(e) =>
+              (e.target.style.background = "transparent")
+            }
+          >
+            Logout
+          </button>
+        </div>
+
+        {/* Navigation buttons */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "15px",
+            padding: "10px 0",
+          }}
+        >
+          {ribbonOptions.map((option, idx) => (
+            <button
+              key={idx}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "white",
+                cursor: "pointer",
+                fontSize: "1.1em",
+                padding: "6px 20px",
+                borderRadius: "8px",
+                transition: "background 0.3s",
+              }}
+              onMouseEnter={(e) =>
+                (e.target.style.background = "rgba(255,255,255,0.2)")
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.background = "transparent")
+              }
+              onClick={() => {
+                switch (option) {
+                  case "Home":
+                    navigate("/weather");
+                    break;
+                  case "Forecast":
+                    navigate("/forecast");
+                    break;
+                  case "Quiz":
+                    navigate("/quiz-difficulty"); // ✅ New page
+                    break;
+                  case "Settings":
+                    navigate("/settings");
+                    break;
+                  case "Profile":
+                    navigate("/profile");
+                    break;
+                  case "Help":
+                    navigate("/chatbot-login");
+                    break;
+                  default:
+                    break;
+                }
+
+                window.scrollTo({
+                  top: document.body.scrollHeight,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Push content below the ribbon */}
+      <div style={{ marginTop: "350px" }}>{children}</div>
+    </div>
+  );
+}
